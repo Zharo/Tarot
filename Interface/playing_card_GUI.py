@@ -19,43 +19,58 @@ HEIGHT = 89
 
 class Playing_Card_GUI():
     
-    def __init__(self,image_on):
-        self.__image_on = image_on
+    def __init__(self,str_image_on):
+        self.__name = str_image_on
+        self.__image_on = PhotoImage(file=str_image_on)
         self.__image = self.__image_on
         self.__image_down = ...#Charger l'image d'une carte face verso
         
+        #Essentiel de rattache l'image à un label pour l'afficher effectivement
+        self.__label = Label(image = self.__image_on)
+        self.__label.image = self.__image_on
+        
         #Deux lignes suivantes à modifier selon la taille réelle
         #La position correspond au bord haut gauche de la carte
-        self.__position = []
-        self.__size = [self.__image.size[0],self.__image.size[1]] #(largeur, hauteur)
-        self.__hitbox(self.__position[0], self.__position[1], self.__size[0], self.size[1])
+        self.__position = [0,0]
+        self.__size = [self.__image.width(),self.__image.height()] #(largeur, hauteur)
+        self.__hitbox = [self.__position[0], self.__position[1], self.__size[0], self.__size[1]]
         
-    def is_mouse_over(self,m_x,m_y):
+    def motion_hitbox(self,event):
         #Si la souris a le focus sur la carte, on la surélève (et on la fait briller ?)
-        flag_x = (m_x > self.__hitbox[0] and m_x < self.__hitbox[0]+self.__hitbox[2])
-        flag_y = (m_y > self.__hitbox[1] and m_y < self.__hitbox[1]+self.__hitbox[3])
+        flag_x = (event.x > self.__hitbox[0] and event.x < self.__hitbox[0]+self.__hitbox[2])
+        flag_y = (event.y > self.__hitbox[1] and event.y < self.__hitbox[1]+self.__hitbox[3])
         
-        return flag_x and flag_y
+        if flag_x and flag_y:
+            print(self.__name," : focused")
+        else:
+            print(self.__name," : not focused")
 
     def hover(self):#Fonction de surélèvelent
         self.set_position(self.get_position()[0],self.get_postion()[1]+20) #On surélève de 20px par exemple
     
-    def set_postion(self,x,y):
+    def set_position(self,x,y):
         self.__position[0] = x
         self.__position[1] = y
         
     def get_position(self):
         return self.__position
     
+    def draw(self,canvas):
+        canvas.create_image(self.__position[0],self.__position[1],anchor=NW,image=self.__image_on)
+        #canvas.config(height=self.__size[0],width=self.__size[1])
+        
     def set_face_up(self,b):
         if b:
             self.__image = self.__image_on
         else:
             self.__image = self.__image_down
-            
     #def onClick(self,game): #On définit ce qu'on doit faire avec la carte une fois cliquée (l'ajouter au tas)
-        
-            
+    def get_name(self):
+        return self.__name
+    
+    def __str__(self):
+        return self.get_name()
+    
 def load_images():
     
     colors = ["coeur","carreau","pique","trèfle"]
@@ -64,21 +79,19 @@ def load_images():
     for i in range(1,10):
         for c in colors:
             if i == 1:
-                CARDS_FACE.append(PhotoImage(file="cards_img/As "+c+".jpg")) #convertir les JPG en PNG sinon erreur ! 
-            else:
-                CARDS_FACE.append(PhotoImage(file="cards_img/"+i+" "+c+".jpg"))
+                CARDS_FACE.append(PhotoImage(file="cards_img/As "+c+".png")) #convertir les JPG en PNG sinon erreur ! 
+            elif i != 9 and c != "pique":
+                CARDS_FACE.append(PhotoImage(file="cards_img/"+str(i)+" "+c+".png"))
     
     for i in heads:
         for c in colors:
-            CARDS_FACE.append(PhotoImage(file="cards_img/"+i+" "+c+".jpg"))
+            CARDS_FACE.append(PhotoImage(file="cards_img/"+str(i)+" "+c+".png"))
             
     for i in range(1,21):
-        CARDS_FACE.append(PhotoImage(file="cards_img/"+i+" atout.jpg"))
+        CARDS_FACE.append(PhotoImage(file="cards_img/"+str(i)+" atout.png"))
         
-    CARDS_FACE.append(PhotoImage(file="cards_img/Excuse.jpg"))
+    CARDS_FACE.append(PhotoImage(file="cards_img/Excuse.png"))
 
-root = Tk()
-load_images()
     
 ''' Ne pas oublier de créer une classe/fonction qui attribue à chaque carte la bonne image en 
 fonction de ses attribus'''

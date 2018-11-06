@@ -6,6 +6,8 @@ Created on Fri Oct  5 20:21:31 2018
 """
 
 from tkinter import *
+from playing_card_GUI import *
+from playing_field import *
 
 class Window(Tk):
     
@@ -14,21 +16,31 @@ class Window(Tk):
         assert self.__class__ is not Window #Classe absraite
         Tk.__init__(self)
         self.__width = width
-        self.__height = height
-        self.__bg_color = "white"
+        self.__height = height    
         
-        #Canvas associé à la fenêtre
-        self.__canvas = Canvas(self, width = width, height = height, bg = self.__bg_color)
-        self.__canvas.pack()
+    def get_width(self):
+        return self.__width
+    
+    def get_height(self):
+        return self.__height
         
 #La fenêtre de jeu principale
 class GameWindow(Window):
     
     def __init__(self,w,h):
         Window.__init__(self,w,h)
+        self.__field = Playing_Field(self)
+        self.__field.pack()
         
-        
+    def show(self):
+        self.__field.place_hands()
+        #Juste un test sur une carte, vérifier ce que veut dire l'erreur : "pyimage... doesn't exist"
      
-win = GameWindow(450,320)
-#win.title("Jeu de Tarot") BUG
+win = GameWindow(1200,650)
+
+'''On met le contenu du jeu ici'''
+
+
+win.show()
+
 win.mainloop()
